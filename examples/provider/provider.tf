@@ -7,5 +7,5 @@ terraform {
 }
 
 # The token comes from the EXODUS_TOKEN environment variable.
-# Create one in the exodus.host panel under «API-токены».
+# Create one in the exodus.host panel: API tokens («API-токены»).
 provider "exodus" {}

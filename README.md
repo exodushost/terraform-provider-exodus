@@ -1,6 +1,6 @@
-# Terraform-провайдер exodus.host
+# Terraform provider for exodus.host
 
-Серверы, SSH-ключи, firewall и сети VPC на [exodus.host](https://exodus.host) из Terraform или OpenTofu.
+Manage [exodus.host](https://exodus.host) servers, SSH keys, firewalls and private networks (VPC) with Terraform or OpenTofu.
 
 ```hcl
 terraform {
@@ -9,7 +9,7 @@ terraform {
   }
 }
 
-provider "exodus" {} # токен из EXODUS_TOKEN
+provider "exodus" {} # token from EXODUS_TOKEN
 
 resource "exodus_ssh_key" "laptop" {
   name       = "laptop"
@@ -31,39 +31,36 @@ output "ssh" {
 }
 ```
 
-## Токен
+## Token
 
-Создайте токен в панели, раздел «API-токены», и передайте его через переменную окружения:
+Create an API token in the panel (API tokens, «API-токены») and pass it in an environment variable:
 
 ```sh
 export EXODUS_TOKEN=exo_...
 terraform apply
 ```
 
-Токен действует только в своём проекте, поэтому указывать проект не нужно.
+A token belongs to one project, so you don't need to set the project.
 
-## Ресурсы
+## Resources
 
-| Ресурс | Что меняется без пересоздания |
-| --- | --- |
-| `exodus_server` | `vcpu`, `ram_gb` (сервер перезапустится), `disk_gb` (только увеличение), `firewall_ids`, `vpc_id` |
-| `exodus_ssh_key` | — |
-| `exodus_firewall` | `name`, `rules` |
-| `exodus_vpc` | — |
+- `exodus_server`: changing `vcpu` or `ram_gb` restarts the server; `disk_gb` can only grow
+- `exodus_ssh_key`
+- `exodus_firewall`
+- `exodus_vpc`
 
-Все ресурсы импортируются по id: `terraform import exodus_server.web <id>`.
+Everything can be imported by id: `terraform import exodus_server.web <id>`.
 
-Регионы, образы и допустимые размеры: `curl https://exodus.host/api/v1/catalog`. Описание REST API: https://exodus.host/api/v1/docs.
+Regions, images and sizes: `curl https://exodus.host/api/v1/catalog`. API docs: [exodus.host/api/v1/docs](https://exodus.host/api/v1/docs).
 
-Диски и снапшоты провайдер пока не умеет, они есть в панели и в API.
+Volumes and snapshots aren't supported yet; use the panel, the API or the [exodus CLI](https://github.com/exodushost/exodus).
 
-## Разработка
+## Development
 
 ```sh
-go test ./...                        # юнит-тесты
-TF_ACC=1 EXODUS_TOKEN=exo_... \
-  go test ./internal/provider -v     # приёмочные: создают и удаляют маленький сервер, это стоит денег
-go generate ./...                    # docs/ для реестра
+go test ./...                                              # unit tests
+TF_ACC=1 EXODUS_TOKEN=exo_... go test ./internal/provider  # creates a small real server (costs money)
+go generate ./...                                          # regenerate docs/
 ```
 
-Релиз: тег `vX.Y.Z` → GitHub Actions собирает и подписывает архивы (goreleaser), реестр Terraform подхватывает их сам.
+To release, push a `vX.Y.Z` tag. GitHub Actions builds and signs the release, and the Terraform Registry picks it up.

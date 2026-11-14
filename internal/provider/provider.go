@@ -41,7 +41,7 @@ func (p *exodusProvider) Metadata(_ context.Context, _ provider.MetadataRequest,
 func (p *exodusProvider) Schema(_ context.Context, _ provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "Manages servers, SSH keys, firewalls and VPC networks on [exodus.host](https://exodus.host). " +
-			"Authenticate with a project API token created in the panel under «API-токены»; the provider works in that token's project.",
+			"Authenticate with a project API token created in the panel (API tokens, «API-токены»); the provider works in that token's project.",
 		Attributes: map[string]schema.Attribute{
 			"token": schema.StringAttribute{
 				MarkdownDescription: "API token (`exo_…`). Can also be set with the `EXODUS_TOKEN` environment variable.",
@@ -79,7 +79,7 @@ func (p *exodusProvider) Configure(ctx context.Context, req provider.ConfigureRe
 	if token == "" {
 		resp.Diagnostics.AddAttributeError(path.Root("token"), "Missing API token",
 			"Set token in the provider block or the EXODUS_TOKEN environment variable. "+
-				"Create a token in the exodus.host panel under «API-токены».")
+				"Create a token in the exodus.host panel: API tokens («API-токены»).")
 		return
 	}
 
